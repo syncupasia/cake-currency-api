@@ -28,11 +28,12 @@ class CurrencyController extends AppController
         $isoCodes = $this->request->getQuery('iso_codes');
         if (!empty($isoCodes)) {
             $validator = new CurrencySearchValidator();
-            if (!$validator->validate($isoCodes)) {
+            $errors = $validator->validate($isoCodes);
+            if (!empty($errors)) {
                 return $this->response
                     ->withStatus(422)
                     ->withType('application/json')
-                    ->withStringBody(json_encode(['message' => 'Request failed', 'errors' => ['iso_codes' => ['custom' => 'Invalid data.']]]));
+                    ->withStringBody(json_encode(['message' => 'Request failed', 'errors' => $errors]));
             }
             $currencies = $this->Currency->find()->whereInList('iso_code', $isoCodes);
         } else {
@@ -46,7 +47,6 @@ class CurrencyController extends AppController
             return $this->response->withType('xlsx')
                     ->withHeader('Content-Disposition', "attachment;filename=\"{$export['filename']}\"")
                     ->withBody($export['stream']);
-
 
         } elseif ($format === 'pdf') {
             $currencyExport = new CurrencyPdfExport($currencies);
@@ -69,7 +69,7 @@ class CurrencyController extends AppController
 
         if (empty($errors)) 
         {
-            // $conversionService - example: add service to container in Application.php
+            // $conversionService - example: add service to DI container in Application.php
             $amount = $conversionService->calculate($data);
             return $this->response
                 ->withStatus(200)

@@ -6,6 +6,7 @@ class CurrencySearchValidator
 {
     public function validate($isoCodes)
     {
+        $errors = [];
         if (!empty($isoCodes) && is_array($isoCodes)) {
             $validIsoCodes = [];
             foreach ($isoCodes as $code) {
@@ -15,7 +16,10 @@ class CurrencySearchValidator
                 }
             }
         }
-        return (count($isoCodes) === count($validIsoCodes));
+        if (count($isoCodes) !== count($validIsoCodes)) {
+           $errors = ['iso_codes' => ['custom' => 'Invalid data.']];
+        }
+        return $errors;
     }
 
 }
