@@ -49,6 +49,16 @@ return function (RouteBuilder $routes): void {
      */
     $routes->setRouteClass(DashedRoute::class);
 
+    $routes->scope('/api', ['_namePrefix' => 'api:'], function ($routes) {
+
+        $routes->get('/currencies', ['controller' => 'Currency', 'action' => 'index']);
+        $routes->get('/currencies/convert/:base_currency/:target_currency', ['controller' => 'Currency', 'action' => 'convert'])
+            ->setPass(['base_currency', 'target_currency']);
+
+        // Catch-all route for invalid API URIs
+        $routes->connect('/*', ['controller' => 'Error', 'action' => 'invalidApiUri'])->setPass(['path']);
+    });
+
     $routes->scope('/', function (RouteBuilder $builder): void {
         /*
          * Here, we are connecting '/' (base path) to a controller called 'Pages',

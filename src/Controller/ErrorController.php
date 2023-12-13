@@ -36,6 +36,20 @@ class ErrorController extends AppController
     }
 
     /**
+     * Custom method to handle invalid API URIs
+     *
+     * @return \Cake\Http\Response|null|void
+     */
+    public function invalidApiUri()
+    {
+        $this->response = $this->response
+            ->withType('application/json')
+            ->withStatus(404);
+        $this->response->getBody()->write(json_encode(['error' => 'Not Found']));
+        return $this->response;
+    }
+
+    /**
      * beforeFilter callback.
      *
      * @param \Cake\Event\EventInterface<\App\Controller\ErrorController> $event Event.
