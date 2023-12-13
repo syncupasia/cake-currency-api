@@ -56,7 +56,7 @@ return function (RouteBuilder $routes): void {
             ->setPass(['base_currency', 'target_currency']);
 
         // Catch-all route for invalid API URIs
-        $routes->connect('/*', ['controller' => 'Error', 'action' => 'invalidApiUri'])->setPass(['path']);
+        $routes->connect('/*', ['controller' => 'Error', 'action' => 'invalidApiUri']);
     });
 
     $routes->scope('/', function (RouteBuilder $builder): void {
