@@ -23,11 +23,13 @@ use Cake\Core\ContainerInterface;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Datasource\FactoryLocator;
 use App\Services\CurrencyConversionService;
+use Cors\Routing\Middleware\CorsMiddleware;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
+
 
 /**
  * Application setup class.
@@ -54,6 +56,7 @@ class Application extends BaseApplication
                 'Table',
                 (new TableLocator())->allowFallbackClass(false)
             );
+            $this->addPlugin('Cors');
         }
 
         /*
@@ -95,6 +98,10 @@ class Application extends BaseApplication
             // available as array through $request->getData()
             // https://book.cakephp.org/4/en/controllers/middleware.html#body-parser-middleware
             ->add(new BodyParserMiddleware())
+
+            ->add(new CorsMiddleware([
+                'config' => 'cors',
+            ]))
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
