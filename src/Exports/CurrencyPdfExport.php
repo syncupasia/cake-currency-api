@@ -31,7 +31,7 @@ class CurrencyPdfExport
             
         } catch (\Exception $e) {
             // Optionally, you can throw a more specific exception or render an error page
-            throw new InternalErrorException('Failed to export Excel. Please try again later.');
+            throw new InternalErrorException('Failed to export PDF. Please try again later.');
         }
     }
 }
