@@ -20,7 +20,6 @@ class CurrencyExcelExport
     public function export()
     {
         try {
-            // Create a new Spreadsheet object
             $spreadsheet = new Spreadsheet();
 
             // Create a new worksheet
@@ -32,13 +31,36 @@ class CurrencyExcelExport
 
             // Add data
             $data = $this->currencies->map(function ($currency) {
-                return [
-                    $currency->iso_code,
-                    $currency->name,
-                    $currency->previous_rate,
-                    $currency->current_rate,
-                ];
-            })->toArray();
+                        return [
+                            $currency->iso_code,
+                            $currency->name,
+                            $currency->previous_rate,
+                            $currency->current_rate,
+                        ];
+                    })->toArray();
+            $count = count($this->currencies);
+            $rowStart = 1;
+            $rowEnd = 1 + $count;
+            $columnArray = ['A','B','C','D'];
+            foreach ($columnArray as $column) {
+                $sheet->getStyle($column.'1')->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setARGB('FF66CDAA');
+                $sheet->getStyle($column.'1')->getFont()->setBold( true );
+            }
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['argb' => 'FF708090'],
+                    ],                         
+                ],
+            ];
+            foreach ($columnArray as $column) {
+                $cellRange = $column.$rowStart.':'.$column.$rowEnd;
+                $sheet->getStyle($cellRange)->applyFromArray($styleArray);
+                $sheet->getColumnDimension($column)->setAutoSize(true);
+            }
             $sheet->fromArray($data, null, 'A2');
 
             // Create a new Xlsx writer
@@ -51,7 +73,7 @@ class CurrencyExcelExport
             return ['stream' => $stream, 'filename' => $filename];
             
         } catch (\Exception $e) {
-            // Optionally, you can throw a more specific exception or render an error page
+            // Can do special handling in controller with this exception
             throw new InternalErrorException('Failed to export Excel. Please try again later.');
         }
     }

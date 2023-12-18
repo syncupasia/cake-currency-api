@@ -30,7 +30,7 @@ class CurrencyPdfExport
             return $mpdf->Output($filename, 'D');
             
         } catch (\Exception $e) {
-            // Optionally, you can throw a more specific exception or render an error page
+            // Can do special handling in controller with this exception
             throw new InternalErrorException('Failed to export PDF. Please try again later.');
         }
     }
