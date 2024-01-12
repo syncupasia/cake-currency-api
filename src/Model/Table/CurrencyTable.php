@@ -43,6 +43,26 @@ class CurrencyTable extends Table
     }
 
     /**
+     * Callback method triggered before a find operation is executed.
+     *
+     * @param \Cake\Event\Event $event The event object.
+     * @param \Cake\ORM\Query $query The query object representing the find operation.
+     * @param array $options Additional options passed to the find operation.
+     * @return void
+     */
+    public function beforeFind($event, $query, $options)
+    {
+        // Modify the query to replace current_rate and previous_rate with their formatted values without trailing zeros
+        $query->formatResults(function ($results) {
+            return $results->map(function ($row) {
+                $row['current_rate'] = (float)rtrim(rtrim($row['current_rate'], '0'), '.');
+                $row['previous_rate'] = (float)rtrim(rtrim($row['previous_rate'], '0'), '.');
+                return $row;
+            });
+        });
+    }
+
+    /**
      * Default validation rules.
      *
      * @param \Cake\Validation\Validator $validator Validator instance.
